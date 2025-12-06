@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SSD1306 Function Translation Cheat Sheet</title>
+<style>
+    :root {
+        --bg: #ffffff;
+        --text: #1a1a1a;
+        --title: #0f3d63;
+        --table-border: #cccccc;
+        --table-header: #f2f6fa;
+    }
+
+    body.dark {
+        --bg: #1a1a1a;
+        --text: #e5e5e5;
+        --title: #6ab7ff;
+        --table-border: #444;
+        --table-header: #2a2a2a;
+    }
+
+    body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+        line-height: 1.6;
+        transition: background 0.3s, color 0.3s;
+    }
+
+    /* Sticky header */
+    .topbar {
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--table-border);
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 100;
+    }
+
+    .topbar h2 {
+        margin: 0;
+        color: var(--title);
+    }
+
+    .toggle-btn {
+        cursor: pointer;
+        padding: 8px 14px;
+        background: var(--title);
+        color: white;
+        border-radius: 6px;
+        border: none;
+        font-size: 14px;
+        transition: opacity 0.2s;
+    }
+
+    .toggle-btn:hover {
+        opacity: 0.8;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    h1, h2, h3 {
+        color: var(--title);
+        border-bottom: 2px solid var(--table-border);
+        padding-bottom: 3px;
+    }
+
+    h1 {
+        text-align: center;
+        border: none;
+        margin-top: 10px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 15px;
+    }
+
+    td, th {
+        border: 1px solid var(--table-border);
+        padding: 8px 10px;
+    }
+
+    th {
+        background: var(--table-header);
+    }
+
+    code {
+        background: rgba(128,128,128,0.15);
+        padding: 2px 5px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .section {
+        margin-top: 40px;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <h2>SSD1306 Cheat Sheet</h2>
+    <button class="toggle-btn" onclick="toggleTheme()">Toggle Light/Dark</button>
+</div>
+
+<div class="container">
+
+<h1>SSD1306 Function Translation Cheat Sheet</h1>
+<p><strong>Adafruit_SSD1306 ↔ SSD1306Wire (ThingPulse)</strong></p>
+
+<hr>
+
+<h2>1. Introduction</h2>
+<p>This document compares:</p>
+<ul>
+    <li><strong>Adafruit_SSD1306</strong> (with Adafruit GFX)</li>
+    <li><strong>SSD1306Wire</strong> (ESP8266/ESP32 OLED library)</li>
+</ul>
+
+<div class="section">
+<h2>2. Text Output</h2>
+
+<table>
+<tr><th>Purpose</th><th>Adafruit_SSD1306</th><th>SSD1306Wire</th><th>Notes</th></tr>
+<tr><td>Print text</td><td><code>print("Hello")</code></td><td><code>drawString(x,y,"Hello")</code></td><td>Draws full string at once</td></tr>
+<tr><td>Cursor print</td><td><code>setCursor(); print()</code></td><td>❌ No cursor</td><td>Use coordinates</td></tr>
+<tr><td>Newline</td><td><code>println()</code></td><td>❌ None</td><td>Manual offset</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>3. Text Positioning</h2>
+
+<table>
+<tr><th>Purpose</th><th>Adafruit</th><th>SSD1306Wire</th><th>Notes</th></tr>
+<tr><td>Set cursor</td><td><code>setCursor()</code></td><td>❌ None</td><td>drawString has coords</td></tr>
+<tr><td>Measure text</td><td><code>getTextBounds()</code></td><td><code>getStringWidth()</code></td><td>Simpler</td></tr>
+<tr><td>Center text</td><td>manual</td><td><code>TEXT_ALIGN_CENTER</code></td><td>Built-in</td></tr>
+<tr><td>Right-align</td><td>manual</td><td><code>TEXT_ALIGN_RIGHT</code></td><td>Built-in</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>4. Fonts</h2>
+
+<table>
+<tr><th>Purpose</th><th>Adafruit</th><th>SSD1306Wire</th><th>Notes</th></tr>
+<tr><td>Select font</td><td><code>setFont(&font)</code></td><td><code>setFont(FontName)</code></td><td>Different formats</td></tr>
+<tr><td>Default font</td><td><code>setFont(NULL)</code></td><td>Arial 10</td><td></td></tr>
+<tr><td>Text size</td><td><code>setTextSize()</code></td><td>❌ None</td><td>Use larger preset font</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>5. Text Color</h2>
+
+<table>
+<tr><th>Purpose</th><th>Adafruit</th><th>SSD1306Wire</th><th>Notes</th></tr>
+<tr><td>Text color</td><td><code>setTextColor()</code></td><td>Always white</td><td>Monochrome</td></tr>
+<tr><td>Invert text</td><td><code>setTextColor(BLACK,WHITE)</code></td><td>❌ None</td><td>No backgrounds</td></tr>
+<tr><td>Invert screen</td><td><code>invertDisplay()</code></td><td><code>invertDisplay()</code></td><td>Same</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>6. Clearing & Updating</h2>
+
+<table>
+<tr><th>Purpose</th><th>Adafruit</th><th>SSD1306Wire</th><th>Notes</th></tr>
+<tr><td>Clear</td><td><code>clearDisplay()</code></td><td><code>clear()</code></td><td></td></tr>
+<tr><td>Display</td><td><code>display()</code></td><td><code>display()</code></td><td>Same</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>7. Graphics</h2>
+
+<table>
+<tr><th>Purpose</th><th>Adafruit</th><th>SSD1306Wire</th><th>Notes</th></tr>
+<tr><td>Pixel</td><td><code>drawPixel()</code></td><td><code>setPixel()</code></td><td></td></tr>
+<tr><td>Line</td><td><code>drawLine()</code></td><td><code>drawLine()</code></td><td></td></tr>
+<tr><td>Rect</td><td><code>drawRect()</code></td><td><code>drawRect()</code></td><td></td></tr>
+<tr><td>Filled rect</td><td><code>fillRect()</code></td><td><code>fillRect()</code></td><td></td></tr>
+<tr><td>Circle</td><td><code>drawCircle()</code></td><td><code>drawCircle()</code></td><td></td></tr>
+<tr><td>Filled circle</td><td><code>fillCircle()</code></td><td><code>fillCircle()</code></td><td></td></tr>
+<tr><td>Triangle</td><td><code>drawTriangle()</code></td><td>❌ No</td><td></td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>8. Bitmaps</h2>
+
+<table>
+<tr><th>Purpose</th><th>Adafruit</th><th>SSD1306Wire</th></tr>
+<tr><td>Bitmap</td><td><code>drawBitmap()</code></td><td><code>drawXbm()</code></td></tr>
+<tr><td>Custom formats</td><td>✔ Many</td><td>❌ Only XBM</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>9. Scrolling</h2>
+
+<table>
+<tr><th>Feature</th><th>Adafruit</th><th>SSD1306Wire</th></tr>
+<tr><td>Scrolling</td><td>✔ Yes</td><td>❌ No</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>10. Rotation</h2>
+
+<table>
+<tr><th>Feature</th><th>Adafruit</th><th>SSD1306Wire</th></tr>
+<tr><td>Rotation</td><td><code>setRotation()</code></td><td>❌ None</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>11. Unique Features</h2>
+
+<h3>SSD1306Wire Exclusive</h3>
+<ul>
+<li>UTF-8 support</li>
+<li>Text alignment (center/right/left)</li>
+<li>ESP-optimized speed</li>
+<li>OledDisplayUi animations</li>
+<li>Overlay rendering</li>
+<li>Auto-refresh mode</li>
+</ul>
+
+<h3>Adafruit_SSD1306 Exclusive</h3>
+<ul>
+<li>Rotation</li>
+<li>Triangles + rounded rectangles</li>
+<li>Hardware scrolling</li>
+<li>Large GFX font ecosystem</li>
+<li>Works on all MCUs</li>
+</ul>
+</div>
+
+<hr>
+<p style="text-align:center; font-size:14px; opacity:0.7;">End of Document</p>
+
+</div>
+
+<script>
+function toggleTheme() {
+    document.body.classList.toggle('dark');
+}
+</script>
+
+</body>
+</html>
